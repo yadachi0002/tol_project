@@ -7,7 +7,7 @@ const checkIntro = document.getElementById("check-intro");
 checkIntro.addEventListener("click", () => {
     const inputValue = introInput.value.trim();
     if(inputValue==="") {
-    feedbackIntro.textContent = "Please make a guess and enter your answer.";
+    feedbackIntro.textContent = "Please enter your answer before checking.";
     feedbackIntro.style.color = "red";
 } else {
     feedbackIntro.textContent = "「から」marks the reason of a situation."
@@ -557,13 +557,12 @@ async function checkPractice3(q) {
       // Browser sets Origin automatically; Worker checks it
       body: JSON.stringify({
         response_text:      answer,
-        learning_objective: "Use 「から」 to express reason → result in a short sentence.",
+        learning_objective: "Learner can create their own sentence using the <Reason>から、<Situation> sentence structure correctly.",
         criteria: [
           "Includes から",
-          "Reason before から; result after",
-          "Polite form (です／ます)",
-          "Natural wording and particles",
-          "Use a comma 「、」 if helpful"
+          "The reason is stated before から; the situation goes after",
+          "Verbs and adjectives are conjugated correctly in the です／ます form",
+          "Particle usage is correct",
         ]
       })
     });
