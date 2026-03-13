@@ -3,9 +3,13 @@
 // CORS: list the one origin that may call this worker from a browser
 function isAllowedOrigin(origin) {
   if (!origin) return null;
-  if (/^http:\/\/localhost:\d+$/.test(origin)) return origin; // dev
-  // TODO: Add your site(s):
+
+  // Allow local dev (optional)
+  if (/^http:\/\/localhost:\d+$/.test(origin)) return origin;
+
+  // ✅ Add your GitHub Pages origin here
   if (origin === "https://yadachi0002.github.io") return origin;
+
   return null;
 }
 
