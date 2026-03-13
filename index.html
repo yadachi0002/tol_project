@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>から Intro and Practice</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <div id="intro">
+            <h3>Let's think! 🤔</h3>
+            <p>Read the following interactions and guess what 「から」is doing in each context. You are also encouraged to listen to each sentence by clicking 🔈.</p>
+            <p>1) <br>
+            Q: 授業は、どうですか。🔈<br>
+            A: おもしろいです<span class="kara">から</span>、すきです。🔈</p>
+            <p>2) <br>
+            Q: 今日、えいがに行きますか。🔈<br>
+            A: あしたしけんがあります<span class="kara">から</span>、行きません。🔈
+            </p>
+
+            <div id="guess">
+                <p>What do you think the function of 「から」 is?</p>
+                <input id="intro-answer">
+                <button class="check" id="check-intro">Check answer</button>
+                <button class="reset" id="reset-intro">Reset</button>
+                <div class="feedback" id="feedback-intro"></div>
+            </div>
+
+            <div class="continue">
+                <button id="continue-intro">Continue</button>
+            </div>
+        </div>
+
+        <div id="explanation">
+            <h3>Let's learn! 📖</h3>
+            <p>「から」 marks the reason of a situation. In 1), おもしろいです is the reason and すきです is the situation. In 2), あしたしけんがあります is the reason and 行きません is the situation. </p>
+            <p><strong>&lt Reason から、Situation &gt</strong></p>
+
+            <p>1) 授業はおもしろいです<span class="kara">から</span>、すきです。<br>
+                  Because class is fun, I like it.</p>
+            <p>2) あしたしけんがあります<span class="kara">から</span>、えいがに行きません。<br>
+                  Because I have a test tomorrow, I will not go to the movie.</p>
+            
+            <div class="continue">
+                <button id="continue-explanation">Continue</button>
+            </div>
+        </div>
+
+        <div id="practice-1">
+            <h3>Let's practice! 💪</h3>
+            <p><strong>I.<br>
+                Instructions: </strong>Drag-and-drop each phrase before or after 「から」.</p>
+            
+            <div id="section-1">
+            <div class="question" id="p1-q1">
+                1)
+                <div class="dropzone" id="dropzone-1">
+                    <div class="slot slot-q1" data-type="reason" data-correct="reason-1">Reason</div>
+                    <div class="kara-p1">から、</div>
+                    <div class="slot slot-q1" data-type="situation" data-correct="situation-1">Situation</div>
+                </div>
+                <button class="check" id="check-p1-1">Check answer</button>
+                <button class="reset" id="reset-p1-1">Reset</button>
+                <div class="feedback" id="feedback-p1-1"></div>
+                <div class="tiles" id="tiles-1">
+                    <div class="tile tile-q1" draggable="true" data-type="situation" data-name="situation-1">えいがに行きませんか</div>
+                    <div class="tile tile-q1" draggable="true" data-type="reason" data-name="reason-1">きっぷが二枚あります</div>
+                </div>
+                
+            </div>
+
+            <div class="question" id="p1-q2">
+                2)
+                <div class="dropzone" id="dropzone-2">
+                    <div class="slot slot-q2" data-type="reason" data-correct="reason-2">Reason</div>
+                    <div class="kara-p1">から、</div>
+                    <div class="slot slot-q2" data-type="situation" data-correct="situation-2">Situation</div>
+                </div>
+                <button class="check" id="check-p1-2">Check answer</button>
+                <button class="reset" id="reset-p1-2">Reset</button>
+                <div class="feedback" id="feedback-p1-2"></div>
+                <div class="tiles" id="tiles-2">
+                    <div class="tile tile-q2" draggable="true" data-type="reason" data-name="reason-2">毎日朝九時から午後四時まで授業があります</div>
+                    <div class="tile tile-q2" draggable="true" data-type="situation" data-name="situation-2">とてもいそがしいです</div>
+                </div>  
+            </div>
+
+            <div class="question" id="p1-q3">
+                3)
+                <div class="dropzone" id="dropzone-3">
+                    <div class="slot slot-q3" data-type="reason" data-correct="reason-3">Reason</div>
+                    <div class="kara-p1">から、</div>
+                    <div class="slot slot-q3" data-type="situation" data-correct="situation-3">Situation</div>
+                </div>
+                <button class="check" id="check-p1-3">Check answer</button>
+                <button class="reset" id="reset-p1-3">Reset</button>
+                <div class="feedback" id="feedback-p1-3"></div>
+                <div class="tiles" id="tiles-3">
+                    <div class="tile tile-q3" draggable="true" data-type="situation" data-name="situation-3">毎日食べます</div>
+                    <div class="tile tile-q3" draggable="true" data-type="reason" data-name="reason-3">すしがすきです</div>
+                </div>
+            </div>
+
+            <div class="question" id="p1-q4">
+                4)
+                <div class="dropzone" id="dropzone-4">
+                    <div class="slot slot-q4" data-type="reason" data-correct="reason-4">Reason</div>
+                    <div class="kara-p1">から、</div>
+                    <div class="slot slot-q4" data-type="situation" data-correct="situation-4">Situation</div>
+                </div>
+                <button class="check" id="check-p1-4">Check answer</button>
+                <button class="reset" id="reset-p1-4">Reset</button>
+                <div class="feedback" id="feedback-p1-4"></div>
+                <div class="tiles" id="tiles-4">
+                    <div class="tile tile-q4" draggable="true" data-type="reason" data-name="reason-4">あしたしけんがあります</div>
+                    <div class="tile tile-q4" draggable="true" data-type="situation" data-name="situation-4">かんじを勉強します</div>
+                </div>
+            </div>
+        </div>
+        <div class="continue">
+            <button id="continue-p1">Continue</button>
+        </div>
+    </div>
+
+            <div id="practice-2">
+            <h3>Let's practice! 💪</h3>
+            <p><strong>II. <br>
+                Instructions: </strong>Complete each sentence with the cues provided.</p>
+                <p><strong>Note: </strong>Please do not use any punctuation such as "、"</p>
+            
+            <div id="section-2">
+                <div class="question" id="p2-q1">
+                    1)
+                    (Because Japanese is fun)<input class="input-p2" id="input-p2-1">、すきです。
+                    <div class="controls">
+                    <button class="check" id="check-p2-1">Check answer</button>
+                    <button class="reset" id="reset-p2-1">Reset</button>
+                    </div>
+                    <div class="feedback" id="feedback-p2-1"></div>
+                </div>
+
+                <div class="question" id="p2-q2">
+                    2)
+                    (Because Tanaka-san is kind)<input class="input-p2" id="input-p2-2">、すきです。
+                    <div class="controls">
+                    <button class="check" id="check-p2-2">Check answer</button>
+                    <button class="reset" id="reset-p2-2">Reset</button>
+                    </div>
+                    <div class="feedback" id="feedback-p2-2"></div>
+                </div>
+
+                <div class="question" id="p2-q3">
+                    3)
+                    (Because winter is very cold)<input class="input-p2" id="input-p2-3">、きらいです。
+                    <div class="controls">
+                    <button class="check" id="check-p2-3">Check answer</button>
+                    <button class="reset" id="reset-p2-3">Reset</button>
+                    </div>
+                    <div class="feedback" id="feedback-p2-3"></div>
+                </div>
+
+                <div class="question" id="p2-q4">
+                    4)
+                    (Because I will study)<input class="input-p2" id="input-p2-4">、パーティー(party)に行きません。
+                    <div class="controls">
+                    <button class="check" id="check-p2-4">Check answer</button>
+                    <button class="reset" id="reset-p2-4">Reset</button>
+                    </div>
+                    <div class="feedback" id="feedback-p2-4"></div>
+                </div>
+            </div>
+           <div class="continue">
+                <button id="continue-p2">Continue</button>
+            </div>
+            </div>
+
+            <div id="practice-3">
+                <h3>Let's practice! 💪</h3>
+                <p><strong>III. <br>
+                Instructions: </strong>Make three sentences about yourself using から.</p>
+
+                <div class="question" id="p3-q1">
+                    1) <input class="input-p3" id="input-p3-1">
+                    <button class="check" id="check-p3-1">Check answer</button>
+                    <button class="reset" id="reset-p3-1">Reset</button>
+                    <div class="feedback" id="feedback-p3-1"></div>
+                </div>
+                <div class="question" id="p3-q2">
+                    2) <input class="input-p3" id="input-p3-2">
+                    <button class="check" id="check-p3-2">Check answer</button>
+                    <button class="reset" id="reset-p3-2">Reset</button>
+                    <div class="feedback" id="feedback-p3-2"></div>
+                </div>
+                <div class="question" id="p3-q3">
+                    3) <input class="input-p3" id="input-p3-3">
+                    <button class="check" id="check-p3-3">Check answer</button>
+                    <button class="reset" id="reset-p3-3">Reset</button>
+                    <div class="feedback" id="feedback-p3-3"></div>
+                </div>
+            </div>
+
+    <script src="script.js"></script>
+    </body>
+</html>
