@@ -551,7 +551,7 @@ async function checkPractice3(q) {
   feedback.style.color = "#555";
 
   try {
-    const res = await fetch("https://llm-feedback-worker.<subdomain>.workers.dev", {
+    const res = await fetch("https://captivate-llm-worker.happytreeih2007.workers.dev/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       // Browser sets Origin automatically; Worker checks it
