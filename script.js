@@ -559,6 +559,7 @@ async function checkPractice3(q) {
         response_text:      answer,
         learning_objective: "Learner can create their own sentence using the <Reason>から、<Situation> sentence structure correctly.",
         criteria: [
+          "The reason logically connects to the situation.",
           "The reason is stated before から; the situation goes after",
           "Verbs and adjectives are conjugated correctly in the です／ます form",
           "Particle usage is correct",
