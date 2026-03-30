@@ -1,3 +1,97 @@
+// Logging module
+// ===============================
+// Secure logging (Cloudflare Worker)
+// ===============================
+
+const LOG_ENDPOINT = "https://tol-log-worker.happytreeih2007.workers.dev/";
+const LOG_API_KEY = "455f2fafc30aa4f82741d24fc1c4a3d2696b553de1a61d2da434379bb8264116";
+
+// Anonymous per‑session id
+const SESSION_ID = crypto.randomUUID();
+const PAGE_NAME = "kara-intro";
+
+function logEvent(event, data = {}) {
+  const payload = {
+    sessionId: SESSION_ID,
+    page: PAGE_NAME,
+    event,
+    timestamp: new Date().toISOString(),
+    ...data
+  };
+
+  // Reliable even on page unload
+  try {
+    navigator.sendBeacon(
+      LOG_ENDPOINT,
+      new Blob([JSON.stringify(payload)], {
+        type: "application/json"
+      })
+    );
+  } catch {
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": LOG_API_KEY
+      },
+      body: JSON.stringify(payload),
+      keepalive: true
+    }).catch(() => {});
+  }
+}
+
+// ===============================
+// Per-question timing
+// ===============================
+
+const questionStartTimes = {};
+
+function startQuestion(questionId) {
+  // Only start once
+  if (questionStartTimes[questionId]) return;
+
+  questionStartTimes[questionId] = Date.now();
+
+  logEvent("question_start", {
+    question: questionId
+  });
+}
+
+function endQuestion(questionId, extra = {}) {
+  const start = questionStartTimes[questionId];
+  if (!start) return;
+
+  logEvent("question_time", {
+    question: questionId,
+    ms_spent: Date.now() - start,
+    ...extra
+  });
+
+  delete questionStartTimes[questionId];
+}
+
+// Log all button clicks
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  logEvent("button_click", {
+    buttonId: btn.id,
+    label: btn.textContent.trim()
+  });
+});
+
+// Log all input typing (privacy-safe & raw option)
+document.addEventListener("input", (e) => {
+  if (!e.target.matches("input")) return;
+
+  logEvent("input_change", {
+    inputId: e.target.id,
+    length: e.target.value.length
+  });
+});
+
+
 // Intro
 const introInput = document.getElementById("intro-answer");
 const feedbackIntro = document.getElementById("feedback-intro");
@@ -5,6 +99,14 @@ const checkIntro = document.getElementById("check-intro");
 
 // Intro - check answer
 checkIntro.addEventListener("click", () => {
+    const answer = introInput.value.trim();
+    
+    logEvent("intro_submission", {
+    question: "kara-function",
+    answer_raw: answer,
+    empty: answer === ""
+});
+
     const inputValue = introInput.value.trim();
     if(inputValue==="") {
     feedbackIntro.textContent = "Please enter your answer before checking.";
@@ -56,8 +158,14 @@ let draggedTileOne = null;
 
 tilesOne.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        startQuestion("p1-q1");
         draggedTileOne = tile;
         tile.classList.add("dragging");
+
+        logEvent("drag_start", {
+            tile: tile.dataset.name,
+            question: "p1-q1"
+        });
     });
 
     tile.addEventListener("dragend", () => {
@@ -87,6 +195,12 @@ slotsOne.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTileOne);
         feedbackOne1.textContent = "";
+
+        logEvent("tile_drop", {
+            tile: draggedTileOne.dataset.name,
+            slot: slot.dataset.type,
+            question: "p1-q1"
+        });
     });
 });
 
@@ -113,6 +227,15 @@ checkOne1.addEventListener("click", () => {
         feedbackOne1.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - going to the movies or having two tickets?";
         feedbackOne1.style.color = "red";
      };  
+
+     logEvent("practice1_check", {
+        question: "p1-q1",
+        correct: allCorrect
+    });
+    
+    endQuestion("p1-q1", {
+        correct: allCorrect
+    });
 });
 
 resetOne1.addEventListener("click", () => {
@@ -136,8 +259,14 @@ let draggedTileTwo = null;
 
 tilesTwo.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        startQuestion("p1-q2");
         draggedTileTwo = tile;
         tile.classList.add("dragging");
+
+         logEvent("drag_start", {
+            tile: tile.dataset.name,
+            question: "p1-q2"
+        });
     });
 
     tile.addEventListener("dragend", () => {
@@ -167,6 +296,12 @@ slotsTwo.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTileTwo);
         feedbackOne2.textContent = "";
+
+        logEvent("tile_drop", {
+            tile: draggedTileOne.dataset.name,
+            slot: slot.dataset.type,
+            question: "p1-q2"
+        });
     });
 });
 
@@ -193,6 +328,15 @@ checkOne2.addEventListener("click", () => {
         feedbackOne2.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - having class from 9am-4pm or being very busy?";
         feedbackOne2.style.color = "red";
      };  
+
+     logEvent("practice1_check", {
+        question: "p1-q2",
+        correct: allCorrect
+    });
+
+    endQuestion("p1-q2", {
+        correct: allCorrect
+    });
 });
 
 resetOne2.addEventListener("click", () => {
@@ -216,8 +360,14 @@ let draggedTile3 = null;
 
 tilesThree.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        startQuestion("p1-q3");
         draggedTile3 = tile;
         tile.classList.add("dragging");
+
+         logEvent("drag_start", {
+            tile: tile.dataset.name,
+            question: "p1-q3"
+        });
     });
     tile.addEventListener("dragend", () => {
         tile.classList.remove("dragging");
@@ -246,6 +396,12 @@ slotsThree.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTile3);
         feedbackOne3.textContent = "";
+
+        logEvent("tile_drop", {
+            tile: draggedTileOne.dataset.name,
+            slot: slot.dataset.type,
+            question: "p1-q3"
+        });
     });
 });
 
@@ -272,6 +428,15 @@ checkOne3.addEventListener("click", () => {
         feedbackOne3.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - eating sushi every day or liking sushi?";
         feedbackOne3.style.color = "red";
     };
+
+    logEvent("practice1_check", {
+        question: "p1-q3",
+        correct: allCorrect
+    });
+
+    endQuestion("p1-q3", {
+        correct: allCorrect
+    });
 });
 
 resetOne3.addEventListener("click", () => {
@@ -295,8 +460,14 @@ let draggedTile4 = null;
 
 tilesFour.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        startQuestion("p1-q4");
         draggedTile4 = tile;
         tile.classList.add("dragging");
+
+         logEvent("drag_start", {
+            tile: tile.dataset.name,
+            question: "p1-q4"
+        });
     });
     tile.addEventListener("dragend", () => {
         tile.classList.remove("dragging");
@@ -325,6 +496,12 @@ slotsFour.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTile4);
         feedbackOne4.textContent = "";
+
+        logEvent("tile_drop", {
+            tile: draggedTileOne.dataset.name,
+            slot: slot.dataset.type,
+            question: "p1-q4"
+        });
     });
 });
 
@@ -350,6 +527,15 @@ checkOne4.addEventListener("click", () => {
         feedbackOne4.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - having a test tomorrow or studying Kanji?";
         feedbackOne4.style.color = "red";
     };
+
+    logEvent("practice1_check", {
+        question: "p1-q4",
+        correct: allCorrect
+    });
+
+    endQuestion("p1-q4", {
+        correct: allCorrect
+    });
 });
 
 resetOne4.addEventListener("click", () => {
@@ -390,6 +576,10 @@ const feedbackTwo1 = document.getElementById("feedback-p2-1");
 const checkTwo1 = document.getElementById("check-p2-1");
 const resetTwo1 = document.getElementById("reset-p2-1");
 
+input1.addEventListener("input", () => {
+    startQuestion("p2-q1");
+}, { once: true });
+
 checkTwo1.addEventListener("click", () => {
     const value = input1.value.trim();
 
@@ -407,6 +597,17 @@ checkTwo1.addEventListener("click", () => {
         feedbackTwo1.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'fun' is たのしい and is an i-adjective.";
         feedbackTwo1.style.color = "red";
     };
+
+    logEvent("practice2_submission", {
+        question: "p2-q1",
+        answer_raw: value,
+        correct: isCorrect
+    });
+    
+    endQuestion("p2-q1", {
+        correct: isCorrect
+    });
+
 });
 
 resetTwo1.addEventListener("click", () => {
@@ -430,6 +631,10 @@ const feedbackTwo2 = document.getElementById("feedback-p2-2");
 const checkTwo2 = document.getElementById("check-p2-2");
 const resetTwo2 = document.getElementById("reset-p2-2");
 
+input2.addEventListener("input", () => {
+    startQuestion("p2-q2");
+}, { once: true });
+
 checkTwo2.addEventListener("click", () => {
     const value = input2.value.trim();
     if(value === "") {
@@ -445,6 +650,16 @@ checkTwo2.addEventListener("click", () => {
         feedbackTwo2.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'kind' is やさしい and is an i-adjective.";
         feedbackTwo2.style.color = "red";
     };
+
+    logEvent("practice2_submission", {
+        question: "p2-q2",
+        answer_raw: value,
+        correct: isCorrect
+    });
+
+    endQuestion("p2-q2", {
+        correct: isCorrect
+    });
 });
 
 resetTwo2.addEventListener("click", () => {
@@ -468,6 +683,10 @@ const feedbackTwo3 = document.getElementById("feedback-p2-3");
 const checkTwo3 = document.getElementById("check-p2-3");
 const resetTwo3 = document.getElementById("reset-p2-3");
 
+input3.addEventListener("input", () => {
+    startQuestion("p2-q3");
+}, { once: true });
+
 checkTwo3.addEventListener("click", () => {
     const value = input3.value.trim();
     if(value === "") {
@@ -483,6 +702,16 @@ checkTwo3.addEventListener("click", () => {
         feedbackTwo3.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'cold' is さむい and is an i-adjective.";
         feedbackTwo3.style.color = "red";
     };
+
+    logEvent("practice2_submission", {
+        question: "p2-q3",
+        answer_raw: value,
+        correct: isCorrect
+    });
+
+    endQuestion("p2-q3", {
+        correct: isCorrect
+    });
 });
 
 resetTwo3.addEventListener("click", () => {
@@ -502,6 +731,10 @@ const feedbackTwo4 = document.getElementById("feedback-p2-4");
 const checkTwo4 = document.getElementById("check-p2-4");
 const resetTwo4 = document.getElementById("reset-p2-4");
 
+input4.addEventListener("input", () => {
+    startQuestion("p2-q4");
+}, { once: true });
+
 checkTwo4.addEventListener("click", () => {
     const value = input4.value.trim();
     if(value === "") {
@@ -517,6 +750,16 @@ checkTwo4.addEventListener("click", () => {
         feedbackTwo4.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The verb 'to study' is べんきょうする.";
         feedbackTwo4.style.color = "red";
     };
+
+    logEvent("practice2_submission", {
+        question: "p2-q4",
+        answer_raw: value,
+        correct: isCorrect
+    });
+
+    endQuestion("p2-q4", {
+        correct: isCorrect
+    });
 });
 
 resetTwo4.addEventListener("click", () => {
@@ -537,9 +780,20 @@ continueP2.addEventListener("click", () => {
 
 // Practice3
 async function checkPractice3(q) {
+    logEvent("practice3_submission", {
+        question: `p3-q${q}`,
+        answer_raw: answer
+    });
+
+    endQuestion(`p3-q${q}`);
+
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
   const answer   = (input.value || "").trim();
+
+  input.addEventListener("input", () => {
+    startQuestion(`p3-q${q}`);
+}, { once: true });
 
   if (!answer) {
     feedback.textContent = "Please write a sentence that uses 「から」.";
