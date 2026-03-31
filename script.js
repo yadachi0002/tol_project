@@ -19,25 +19,15 @@ function logEvent(event, data = {}) {
     ...data
   };
 
-  // Reliable even on page unload
-  try {
-    navigator.sendBeacon(
-      LOG_ENDPOINT,
-      new Blob([JSON.stringify(payload)], {
-        type: "application/json"
-      })
-    );
-  } catch {
-    fetch(LOG_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": LOG_API_KEY
-      },
-      body: JSON.stringify(payload),
-      keepalive: true
-    }).catch(() => {});
-  }
+  fetch(LOG_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": LOG_API_KEY
+    },
+    body: JSON.stringify(payload),
+    keepalive: true   // ✅ still safe on page unload
+  }).catch(() => {});
 }
 
 // ===============================
@@ -81,15 +71,39 @@ document.addEventListener("click", (e) => {
   });
 });
 
-// Log all input typing (privacy-safe & raw option)
-document.addEventListener("input", (e) => {
-  if (!e.target.matches("input")) return;
-
-  logEvent("input_change", {
-    inputId: e.target.id,
-    length: e.target.value.length
-  });
+// Log input typing just for non-question inputs
+document.querySelectorAll("input:not(.input-p2):not(.input-p3)").forEach(input => {
+  input.addEventListener("input", () => {
+    logEvent("input_started", { inputId: input.id });
+  }, { once: true });
 });
+``
+
+// ===============================
+// Section-level timing
+// ===============================
+
+const sectionStartTimes = {};
+
+function startSection(sectionName) {
+  sectionStartTimes[sectionName] = Date.now();
+
+  logEvent("section_view", {
+    section: sectionName
+  });
+}
+
+function endSection(sectionName) {
+  const start = sectionStartTimes[sectionName];
+  if (!start) return;
+
+  logEvent("section_time", {
+    section: sectionName,
+    ms_spent: Date.now() - start
+  });
+
+  delete sectionStartTimes[sectionName];
+}
 
 
 // Intro
@@ -130,10 +144,12 @@ const continueIntro = document.getElementById("continue-intro");
 const explanation = document.getElementById("explanation");
 
 continueIntro.addEventListener("click", () => {
-    explanation.style.display = "block";
-    requestAnimationFrame(() => {
-        explanation.scrollIntoView({behavior: "smooth", block: "start"});
-    });
+  endSection("intro");
+
+  explanation.style.display = "block";
+  startSection("explanation");
+
+  explanation.scrollIntoView({ behavior: "smooth" });
 });
 
 // Explanation - continue
@@ -141,10 +157,12 @@ const continueExp = document.getElementById("continue-explanation");
 const practiceOne = document.getElementById("practice-1");
 
 continueExp.addEventListener("click", () => {
-    practiceOne.style.display = "block";
-    requestAnimationFrame(() => {
-        practiceOne.scrollIntoView({behavior: "smooth", block: "start"});
-    });
+  endSection("explanation");
+
+  practiceOne.style.display = "block";
+  startSection("practice-1");
+
+  practiceOne.scrollIntoView({ behavior: "smooth" });
 });
 
 // Practice1 - Q1
@@ -298,7 +316,7 @@ slotsTwo.forEach(slot => {
         feedbackOne2.textContent = "";
 
         logEvent("tile_drop", {
-            tile: draggedTileOne.dataset.name,
+            tile: draggedTileTwo.dataset.name,
             slot: slot.dataset.type,
             question: "p1-q2"
         });
@@ -398,7 +416,7 @@ slotsThree.forEach(slot => {
         feedbackOne3.textContent = "";
 
         logEvent("tile_drop", {
-            tile: draggedTileOne.dataset.name,
+            tile: draggedTile3.dataset.name,
             slot: slot.dataset.type,
             question: "p1-q3"
         });
@@ -498,7 +516,7 @@ slotsFour.forEach(slot => {
         feedbackOne4.textContent = "";
 
         logEvent("tile_drop", {
-            tile: draggedTileOne.dataset.name,
+            tile: draggedTile4.dataset.name,
             slot: slot.dataset.type,
             question: "p1-q4"
         });
@@ -553,10 +571,12 @@ const continueP1 = document.getElementById("continue-p1");
 const practiceTwo = document.getElementById("practice-2")
 
 continueP1.addEventListener("click", () => {
-    practiceTwo.style.display = "block";
-    requestAnimationFrame(() => {
-        practiceTwo.scrollIntoView({behavior: "smooth", block: "start"});
-    });
+  endSection("practice-1");
+
+  practiceTwo.style.display = "block";
+  startSection("practice-2");
+
+  practiceTwo.scrollIntoView({ behavior: "smooth" });
 });
 
 // Practice2 Q1
@@ -719,7 +739,7 @@ resetTwo3.addEventListener("click", () => {
     feedbackTwo3.textContent = "";
 });
 
-// Practice4 Q4
+// Practice2 Q4
 const answers4 = [
     "勉強しますから",
     "べんきょうしますから",
@@ -772,34 +792,33 @@ const continueP2 = document.getElementById("continue-p2");
 const practiceThree = document.getElementById("practice-3");
 
 continueP2.addEventListener("click", () => {
-    practiceThree.style.display = "block";
-    requestAnimationFrame(() => {
-        practiceThree.scrollIntoView({behavior: "smooth", block: "start"});
-    });
+  endSection("practice-2");
+
+  practiceThree.style.display = "block";
+  startSection("practice-3");
+
+  practiceThree.scrollIntoView({ behavior: "smooth" });
 });
 
 // Practice3
 async function checkPractice3(q) {
-    logEvent("practice3_submission", {
-        question: `p3-q${q}`,
-        answer_raw: answer
-    });
-
-    endQuestion(`p3-q${q}`);
 
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
   const answer   = (input.value || "").trim();
-
-  input.addEventListener("input", () => {
-    startQuestion(`p3-q${q}`);
-}, { once: true });
 
   if (!answer) {
     feedback.textContent = "Please write a sentence that uses 「から」.";
     feedback.style.color = "red";
     return;
   }
+
+  logEvent("practice3_submission", {
+        question: `p3-q${q}`,
+        answer_raw: answer
+    });
+
+    endQuestion(`p3-q${q}`);
 
   feedback.textContent = "Evaluating your sentence…";
   feedback.style.color = "#555";
@@ -850,6 +869,10 @@ async function checkPractice3(q) {
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
 
+input.addEventListener("input", () => {
+    startQuestion(`p3-q${q}`);
+}, { once: true });
+
   btnCheck?.addEventListener("click", (e) => {
     e.preventDefault();
     checkPractice3(q);
@@ -860,5 +883,17 @@ async function checkPractice3(q) {
     if (input) input.value = "";
     if (feedback) feedback.textContent = "";
     input?.focus();
+  });
+});
+
+// Start timing Intro when page loads
+document.addEventListener("DOMContentLoaded", () => {
+  startSection("intro");
+});
+
+// Capture time if learner leaves early
+window.addEventListener("beforeunload", () => {
+  Object.keys(sectionStartTimes).forEach(section => {
+    endSection(section);
   });
 });
