@@ -841,6 +841,15 @@ async function checkPractice3(q) {
     });
 
     const data = await res.json();
+
+    logEvent("practice3_feedback", {
+        question: `p3-q${q}`,
+        verdict: data.verdict ?? null,
+        summary: data.summary ?? null,
+        criteria_feedback: data.criteria_feedback ?? null,
+        next_step: data.next_step ?? null
+    });
+
     // Render: verdict + bullets
     const lines = [];
     if (data.verdict) lines.push(`Verdict: ${data.verdict}`);
