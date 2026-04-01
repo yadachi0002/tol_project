@@ -467,105 +467,6 @@ resetOne3.addEventListener("click", () => {
     feedbackOne3.textContent = "";
 });
 
-// Practice1 - Q4
-const tilesFour = document.querySelectorAll(".tile-q4");
-const slotsFour = document.querySelectorAll(".slot-q4");
-const checkOne4 = document.getElementById("check-p1-4");
-const resetOne4 = document.getElementById("reset-p1-4");
-const feedbackOne4 = document.getElementById("feedback-p1-4");
-const bankOne4 = document.getElementById("tiles-4")
-let draggedTile4 = null;
-
-tilesFour.forEach(tile => {
-    tile.addEventListener("dragstart", () => {
-        startQuestion("p1-q4");
-        draggedTile4 = tile;
-        tile.classList.add("dragging");
-
-         logEvent("drag_start", {
-            tile: tile.dataset.name,
-            question: "p1-q4"
-        });
-    });
-    tile.addEventListener("dragend", () => {
-        tile.classList.remove("dragging");
-        draggedTile4 = null;
-    });
-});
-
-slotsFour.forEach(slot => {
-    slot.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        slot.classList.add("over");
-    });
-    slot.addEventListener("dragleave", () => {
-        slot.classList.remove("over");
-    });
-    slot.addEventListener("drop", (e) => {
-        e.preventDefault();
-        slot.classList.remove("over");
-
-        if(!draggedTile4) return;
-
-        const existingTile = slot.querySelector(".tile-q4");
-        if(existingTile) {
-            bankOne4.appendChild(existingTile);
-        };
-        slot.textContent = "";
-        slot.appendChild(draggedTile4);
-        feedbackOne4.textContent = "";
-
-        logEvent("tile_drop", {
-            tile: draggedTile4.dataset.name,
-            slot: slot.dataset.type,
-            question: "p1-q4"
-        });
-    });
-});
-
-checkOne4.addEventListener("click", () => {
-    let allCorrect = true;
-    slotsFour.forEach(slot => {
-        const slotCorrect = slot.dataset.correct;
-        const tile = slot.querySelector(".tile-q4");
-
-        if(!tile) {
-            feedbackOne4.textContent = "One or more tiles are missing. Please fill all tile slots.";
-            feedbackOne4.style.color = "red";
-        };
-        const tileName = tile.dataset.name;
-        if(slotCorrect != tileName) {
-            allCorrect = false;
-        };
-    });
-    if(allCorrect) {
-        feedbackOne4.textContent = "✅　正解（せいかい）！This sentence means, 'Since I have a test tomorrow, I will study Kanji.'";
-        feedbackOne4.style.color = "green";
-    } else {
-        feedbackOne4.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - having a test tomorrow or studying Kanji?";
-        feedbackOne4.style.color = "red";
-    };
-
-    logEvent("practice1_check", {
-        question: "p1-q4",
-        correct: allCorrect
-    });
-
-    endQuestion("p1-q4", {
-        correct: allCorrect
-    });
-});
-
-resetOne4.addEventListener("click", () => {
-    document.querySelectorAll(".slot-q4 .tile-q4").forEach(tile => {
-        bankOne4.appendChild(tile);
-    });
-    slotsFour.forEach(slot => {
-        slot.textContent = slot.dataset.type === "reason" ? "Reason" : "Situation";
-    });
-    feedbackOne4.textContent = "";
-});
-
 // Practice1 - continue
 const continueP1 = document.getElementById("continue-p1");
 const practiceTwo = document.getElementById("practice-2")
@@ -637,14 +538,14 @@ resetTwo1.addEventListener("click", () => {
 
 // Practice2 Q2
 const answers2 = [
-    "田中さんは優しいですから",
-    "田中さんはやさしいですから",
-    "たなかさんは優しいですから",
-    "たなかさんはやさしいですから",
-    "田中さんは優しいから",
-    "田中さんはやさしいから",
-    "たなかさんは優しいから",
-    "たなかさんはやさしいから"
+    "冬はとても寒いですから",
+    "冬はとてもさむいですから",
+    "ふゆはとても寒いですから",
+    "ふゆはとてもさむいですから",
+    "冬はとても寒いから",
+    "冬はとてもさむいから",
+    "ふゆはとても寒いから",
+    "ふゆはとてもさむいから",
 ];
 const input2 = document.getElementById("input-p2-2");
 const feedbackTwo2 = document.getElementById("feedback-p2-2");
@@ -664,10 +565,10 @@ checkTwo2.addEventListener("click", () => {
     };
     const isCorrect = answers2.includes(value)
     if(isCorrect) {
-        feedbackTwo2.textContent = "✅　正解（せいかい）！This sentence means, 'Because Tanaka-san is kind, I like them.'";
+        feedbackTwo2.textContent = "✅　正解（せいかい）！This sentence means, 'Because winter is very cold, I don't like it.'";
         feedbackTwo2.style.color = "green";
     } else {
-        feedbackTwo2.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'kind' is やさしい and is an i-adjective.";
+        feedbackTwo2.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'cold' is さむい and is an i-adjective. 'Very' is とても.";
         feedbackTwo2.style.color = "red";
     };
 
@@ -689,14 +590,10 @@ resetTwo2.addEventListener("click", () => {
 
 // Practice2 Q3
 const answers3 = [
-    "冬は寒いですから",
-    "冬はさむいですから",
-    "ふゆは寒いですから",
-    "ふゆはさむいですから",
-    "冬は寒いから",
-    "冬はさむいから",
-    "ふゆは寒いから",
-    "ふゆはさむいから",
+    "勉強しますから",
+    "べんきょうしますから",
+    "勉強するから",
+    "べんきょうするから",
 ];
 const input3 = document.getElementById("input-p2-3");
 const feedbackTwo3 = document.getElementById("feedback-p2-3");
@@ -716,10 +613,10 @@ checkTwo3.addEventListener("click", () => {
     };
     const isCorrect = answers3.includes(value);
     if(isCorrect) {
-        feedbackTwo3.textContent = "✅　正解（せいかい）！This sentence means, 'Because winter is very cold, I don't like it.'";
+        feedbackTwo3.textContent = "✅　正解（せいかい）！This sentence means, 'Because I will study, I will not go to the party.'";
         feedbackTwo3.style.color = "green";
     } else {
-        feedbackTwo3.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'cold' is さむい and is an i-adjective.";
+        feedbackTwo3.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The verb 'to study' is べんきょうする.";
         feedbackTwo3.style.color = "red";
     };
 
@@ -737,54 +634,6 @@ checkTwo3.addEventListener("click", () => {
 resetTwo3.addEventListener("click", () => {
     input3.value = "";
     feedbackTwo3.textContent = "";
-});
-
-// Practice2 Q4
-const answers4 = [
-    "勉強しますから",
-    "べんきょうしますから",
-    "勉強するから",
-    "べんきょうするから",
-];
-const input4 = document.getElementById("input-p2-4");
-const feedbackTwo4 = document.getElementById("feedback-p2-4");
-const checkTwo4 = document.getElementById("check-p2-4");
-const resetTwo4 = document.getElementById("reset-p2-4");
-
-input4.addEventListener("input", () => {
-    startQuestion("p2-q4");
-}, { once: true });
-
-checkTwo4.addEventListener("click", () => {
-    const value = input4.value.trim();
-    if(value === "") {
-        feedbackTwo4.textContent = "Please enter an answer before checking.";
-        feedbackTwo4.style.color = "red";
-        return;
-    };
-    const isCorrect = answers4.includes(value);
-    if(isCorrect) {
-        feedbackTwo4.textContent = "✅　正解（せいかい）！This sentence means, 'Because I will study, I will not go to the party.'";
-        feedbackTwo4.style.color = "green";
-    } else {
-        feedbackTwo4.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The verb 'to study' is べんきょうする.";
-        feedbackTwo4.style.color = "red";
-    };
-
-    logEvent("practice2_submission", {
-        question: "p2-q4",
-        answer_raw: value,
-        correct: isCorrect
-    });
-
-    endQuestion("p2-q4", {
-        correct: isCorrect
-    });
-});
-
-resetTwo4.addEventListener("click", () => {
-    input4.value = "";
-    feedbackTwo4.textContent = "";
 });
 
 // Practice3 continue
