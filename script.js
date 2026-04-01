@@ -862,7 +862,7 @@ async function checkPractice3(q) {
 
     feedback.textContent = lines.join("\n");
     feedback.style.whiteSpace = "pre-wrap";
-    feedback.style.color = (data.verdict === "Correct") ? "green" : "red";
+    feedback.style.color = (data.verdict === "Correct") ? "green" : "purple";
   } catch (err) {
     feedback.textContent = "Temporary issue contacting the feedback service. Please try again.";
     feedback.style.color = "red";
