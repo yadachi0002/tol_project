@@ -8,7 +8,7 @@ const LOG_API_KEY = "455f2fafc30aa4f82741d24fc1c4a3d2696b553de1a61d2da434379bb82
 
 // Anonymous per‑session id
 const SESSION_ID = crypto.randomUUID();
-const PAGE_NAME = "kara-intro";
+const PAGE_NAME = "tol-project";
 
 function logEvent(event, data = {}) {
   const payload = {
