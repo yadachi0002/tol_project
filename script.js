@@ -19,15 +19,15 @@ function logEvent(event, data = {}) {
     ...data
   };
 
-  fetch(LOG_ENDPOINT, {
+  return fetch(LOG_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-API-Key": LOG_API_KEY
     },
     body: JSON.stringify(payload),
-    keepalive: true   // ✅ still safe on page unload
-  }).catch(() => {});
+    keepalive: true
+  });
 }
 
 // ===============================
@@ -842,7 +842,7 @@ async function checkPractice3(q) {
 
     const data = await res.json();
 
-    logEvent("practice3_feedback", {
+    await logEvent("practice3_feedback", {
         question: `p3-q${q}`,
         verdict: data.verdict ?? null,
         summary: data.summary ?? null,
