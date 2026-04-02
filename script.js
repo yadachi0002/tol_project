@@ -107,6 +107,23 @@ function endSection(sectionName) {
 
 
 // Intro
+// Audio
+const audioMap = {
+    q1: new Audio("audio/tol-1.mp3"),
+    q2: new Audio("audio/tol-2.mp3")
+};
+
+document.querySelectorAll(".audio").forEach(button => {
+    button.style.cursor = "pointer"; 
+    button.addEventListener("click", () => {
+        const audioKey = button.dataset.name;
+        if(audioMap[audioKey]) {
+            audioMap[audioKey].currentTime = 0;
+            audioMap[audioKey].play();
+        };
+    });
+});
+
 const introInput = document.getElementById("intro-answer");
 const feedbackIntro = document.getElementById("feedback-intro");
 const checkIntro = document.getElementById("check-intro");
