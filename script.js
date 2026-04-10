@@ -1,3 +1,5 @@
+// Feed attempt history to LLM.
+
 // Logging module
 // ===============================
 // Secure logging (Cloudflare Worker)
@@ -95,6 +97,11 @@ function endSection(sectionName) {
 
   delete sectionStartTimes[sectionName];
 }
+
+// ===============================
+// Practice 3 revision history
+// ===============================
+const practice3History = {};
 
 
 // Intro & Explanation audio
@@ -784,6 +791,17 @@ async function checkPractice3(q) {
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
   const answer   = (input.value || "").trim();
+  const questionId = `p3-q${q}`;
+
+  if (!practice3History[questionId]) {
+    practice3History[questionId] = [];
+}
+const attemptNumber = practice3History[questionId].length + 1;
+
+practice3History[questionId].push({
+  attempt: attemptNumber,
+  learner_input: answer
+});
 
   if (!answer) {
     feedback.textContent = "Please write a sentence that uses 「から」.";
@@ -807,17 +825,20 @@ async function checkPractice3(q) {
       headers: { "Content-Type": "application/json" },
       // Browser sets Origin automatically; Worker checks it
       body: JSON.stringify({
-        response_text:      answer,
+        response_text: answer,
         learning_objective: "Learner can create their own sentence using the <Reason>から、<Situation> sentence structure correctly.",
         criteria: [
-          "The reason clearly and logically connects to the situation",
-          "Verbs and adjectives are conjugated correctly in the です／ます form",
-          "Particle usage is correct",
-        ]
-      })
+            "The reason clearly and logically connects to the situation",
+            "Verbs and adjectives are conjugated correctly in the です／ます form",
+            "Vocabulary usage is correct",
+            "Particle usage is correct"
+        ],
+        revision_context: practice3History[questionId]
+    })
     });
 
     const data = await res.json();
+    practice3History[questionId][attemptNumber - 1].feedback = data;
 
     await logEvent("practice3_feedback", {
         question: `p3-q${q}`,
