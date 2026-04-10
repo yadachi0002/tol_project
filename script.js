@@ -41,10 +41,6 @@ function startQuestion(questionId) {
   if (questionStartTimes[questionId]) return;
 
   questionStartTimes[questionId] = Date.now();
-
-  logEvent("question_start", {
-    question: questionId
-  });
 }
 
 function endQuestion(questionId, extra = {}) {
@@ -74,7 +70,6 @@ document.addEventListener("click", (e) => {
 // Log input typing just for non-question inputs
 document.querySelectorAll("input:not(.input-p2):not(.input-p3)").forEach(input => {
   input.addEventListener("input", () => {
-    logEvent("input_started", { inputId: input.id });
   }, { once: true });
 });
 ``
@@ -87,10 +82,6 @@ const sectionStartTimes = {};
 
 function startSection(sectionName) {
   sectionStartTimes[sectionName] = Date.now();
-
-  logEvent("section_view", {
-    section: sectionName
-  });
 }
 
 function endSection(sectionName) {
@@ -106,11 +97,12 @@ function endSection(sectionName) {
 }
 
 
-// Intro
-// Audio
+// Intro & Explanation audio
 const audioMap = {
     q1: new Audio("audio/tol-1.mp3"),
-    q2: new Audio("audio/tol-2.mp3")
+    q2: new Audio("audio/tol-2.mp3"),
+    exp1: new Audio("audio/exp1.mp3"),
+    exp2: new Audio("audio/exp2.mp3")
 };
 
 document.querySelectorAll(".audio").forEach(button => {
@@ -196,11 +188,6 @@ tilesOne.forEach(tile => {
         startQuestion("p1-q1");
         draggedTileOne = tile;
         tile.classList.add("dragging");
-
-        logEvent("drag_start", {
-            tile: tile.dataset.name,
-            question: "p1-q1"
-        });
     });
 
     tile.addEventListener("dragend", () => {
@@ -230,12 +217,6 @@ slotsOne.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTileOne);
         feedbackOne1.textContent = "";
-
-        logEvent("tile_drop", {
-            tile: draggedTileOne.dataset.name,
-            slot: slot.dataset.type,
-            question: "p1-q1"
-        });
     });
 });
 
@@ -297,11 +278,6 @@ tilesTwo.forEach(tile => {
         startQuestion("p1-q2");
         draggedTileTwo = tile;
         tile.classList.add("dragging");
-
-         logEvent("drag_start", {
-            tile: tile.dataset.name,
-            question: "p1-q2"
-        });
     });
 
     tile.addEventListener("dragend", () => {
@@ -331,12 +307,6 @@ slotsTwo.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTileTwo);
         feedbackOne2.textContent = "";
-
-        logEvent("tile_drop", {
-            tile: draggedTileTwo.dataset.name,
-            slot: slot.dataset.type,
-            question: "p1-q2"
-        });
     });
 });
 
@@ -398,11 +368,6 @@ tilesThree.forEach(tile => {
         startQuestion("p1-q3");
         draggedTile3 = tile;
         tile.classList.add("dragging");
-
-         logEvent("drag_start", {
-            tile: tile.dataset.name,
-            question: "p1-q3"
-        });
     });
     tile.addEventListener("dragend", () => {
         tile.classList.remove("dragging");
@@ -431,12 +396,6 @@ slotsThree.forEach(slot => {
         slot.textContent = "";
         slot.appendChild(draggedTile3);
         feedbackOne3.textContent = "";
-
-        logEvent("tile_drop", {
-            tile: draggedTile3.dataset.name,
-            slot: slot.dataset.type,
-            question: "p1-q3"
-        });
     });
 });
 
@@ -498,162 +457,315 @@ continueP1.addEventListener("click", () => {
 });
 
 // Practice2 Q1
-const answers1 = [
-    "日本語は楽しいですから",
-    "日本語はたのしいですから",
-    "にほんごは楽しいですから",
-    "にほんごはたのしいですから",
-    "日本語は楽しいから",
-    "日本語はたのしいから",
-    "にほんごは楽しいから",
-    "にほんごはたのしいから"
-];
+const tilesTwo1 = document.querySelectorAll(".tile-p2-q1");
+const slotsTwo1 = document.querySelectorAll(".slot-p2-q1");
+const bankTwo1 = document.getElementById("tiles-p2-q1");
+const checkTwo1 = document.getElementById("check-p2-q1");
+const resetTwo1 = document.getElementById("reset-p2-q1");
+const feedbackTwo1 = document.getElementById("feedback-p2-q1");
+let draggedTileTwo1 = null;
 
-const input1 = document.getElementById("input-p2-1");
-const feedbackTwo1 = document.getElementById("feedback-p2-1");
-const checkTwo1 = document.getElementById("check-p2-1");
-const resetTwo1 = document.getElementById("reset-p2-1");
+// dragstart/end
+tilesTwo1.forEach(tile => {
+    tile.addEventListener("dragstart", () => {
+        draggedTileTwo1 = tile;
+        tile.classList.add("dragging");
+    });
 
-input1.addEventListener("input", () => {
-    startQuestion("p2-q1");
-}, { once: true });
+    tile.addEventListener("dragend", () => {
+        tile.classList.remove("dragging");
+        draggedTileTwo1 = null;
+    });
+});
 
+// slot dragover/drop
+slotsTwo1.forEach(slot => {
+    slot.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        slot.classList.add("over");
+    });
+
+    slot.addEventListener("dragleave", () => {
+        slot.classList.remove("over");
+    });
+
+    slot.addEventListener("drop", (e) => {
+        e.preventDefault();
+        slot.classList.remove("over");
+
+        if(!draggedTileTwo1) {
+            return;
+        };
+        const existingTileTwo1 = slot.querySelector(".tile-p2-q1");
+        if(existingTileTwo1) {
+            bankTwo1.appendChild(existingTileTwo1);
+        };
+        slot.appendChild(draggedTileTwo1);
+    });
+});
+
+// check answers
 checkTwo1.addEventListener("click", () => {
-    const value = input1.value.trim();
+    let allCorrect = true;
+    let missingTile = false;
 
-    if(value === "") {
-        feedbackTwo1.textContent = "Please enter an answer before checking.";
+    tilesTwo1.forEach(tile => tile.classList.remove("incorrect"));
+
+    slotsTwo1.forEach(slot => {
+        const tile = slot.querySelector(".tile-p2-q1");
+
+        if(!tile) {
+            missingTile = true;
+            allCorrect = false;
+            return;
+        };
+
+        const tileName = tile.dataset.name;
+        const slotCorrect = slot.dataset.correct;
+        if(tileName != slotCorrect) {
+            allCorrect = false;
+            tile.classList.add("incorrect");
+        };
+    });
+
+    if(missingTile) {
+        feedbackTwo1.textContent = "One or more tiles are missing. Please fill all slots.";
         feedbackTwo1.style.color = "red";
-        return;
-    };
-    const isCorrect = answers1.includes(value);
-
-    if(isCorrect) {
-        feedbackTwo1.textContent = "✅　正解（せいかい）！This sentence means, 'Because Japanese is fun, I like it.'";
+    } else if(allCorrect) {
+        feedbackTwo1.textContent = "✅　正解（せいかい）！";
         feedbackTwo1.style.color = "green";
     } else {
-        feedbackTwo1.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'fun' is たのしい and is an i-adjective.";
+        feedbackTwo1.textContent = "Highlighted tiles are incorrect. Please try again.";
         feedbackTwo1.style.color = "red";
     };
+
+    const answers = Array.from(slotsTwo1).map(slot => {
+        const tile = slot.querySelector(".tile-p2-q1");
+        return tile ? tile.dataset.name : null;
+    });
 
     logEvent("practice2_submission", {
         question: "p2-q1",
-        answer_raw: value,
-        correct: isCorrect
+        correct: allCorrect,
+        answers_raw: answers,
+        missing: missingTile
     });
-    
-    endQuestion("p2-q1", {
-        correct: isCorrect
-    });
-
 });
 
+// reset
 resetTwo1.addEventListener("click", () => {
-    input1.value = "";
+    document.querySelectorAll(".slot-p2-q1 .tile-p2-q1").forEach(tile => {
+        bankTwo1.appendChild(tile);
+        tile.classList.remove("incorrect");
+    });
     feedbackTwo1.textContent = "";
 });
 
-// Practice2 Q2
-const answers2 = [
-    "冬はとても寒いですから",
-    "冬はとてもさむいですから",
-    "ふゆはとても寒いですから",
-    "ふゆはとてもさむいですから",
-    "冬はとても寒いから",
-    "冬はとてもさむいから",
-    "ふゆはとても寒いから",
-    "ふゆはとてもさむいから",
-];
-const input2 = document.getElementById("input-p2-2");
-const feedbackTwo2 = document.getElementById("feedback-p2-2");
-const checkTwo2 = document.getElementById("check-p2-2");
-const resetTwo2 = document.getElementById("reset-p2-2");
+// Practice 2 Q2
+const tilesTwo2 = document.querySelectorAll(".tile-p2-q2");
+const slotsTwo2 = document.querySelectorAll(".slot-p2-q2");
+const bankTwo2 = document.getElementById("tiles-p2-q2");
+const checkTwo2 = document.getElementById("check-p2-q2");
+const resetTwo2 = document.getElementById("reset-p2-q2");
+const feedbackTwo2 = document.getElementById("feedback-p2-q2");
+let draggedTileTwo2 = null;
 
-input2.addEventListener("input", () => {
-    startQuestion("p2-q2");
-}, { once: true });
+// dragstart/end
+tilesTwo2.forEach(tile => {
+    tile.addEventListener("dragstart", () => {
+        draggedTileTwo2 = tile;
+        tile.classList.add("dragging");
+    });
 
+    tile.addEventListener("dragend", () => {
+        tile.classList.remove("dragging");
+        draggedTileTwo2 = null;
+    });
+});
+
+// slot dragover/drop
+slotsTwo2.forEach(slot => {
+    slot.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        slot.classList.add("over");
+    });
+
+    slot.addEventListener("dragleave", () => {
+        slot.classList.remove("over");
+    });
+
+    slot.addEventListener("drop", (e) => {
+        e.preventDefault();
+        slot.classList.remove("over");
+
+        if(!draggedTileTwo2) {
+            return;
+        };
+        const existingTileTwo2 = slot.querySelector(".tile-p2-q2");
+        if(existingTileTwo2) {
+            bankTwo2.appendChild(existingTileTwo2);
+        };
+        slot.appendChild(draggedTileTwo2);
+    });
+});
+
+// check answers
 checkTwo2.addEventListener("click", () => {
-    const value = input2.value.trim();
-    if(value === "") {
-        feedbackTwo2.textContent = "Please enter an answer before checking.";
+    let allCorrect = true;
+    let missingTile = false;
+
+    tilesTwo2.forEach(tile => tile.classList.remove("incorrect"));
+
+    slotsTwo2.forEach(slot => {
+        const tile = slot.querySelector(".tile-p2-q2");
+
+        if(!tile) {
+            missingTile = true;
+            allCorrect = false;
+            return;
+        };
+
+        const tileName = tile.dataset.name;
+        const slotCorrect = slot.dataset.correct;
+        if(tileName != slotCorrect) {
+            allCorrect = false;
+            tile.classList.add("incorrect");
+        };
+    });
+
+    if(missingTile) {
+        feedbackTwo2.textContent = "One or more tiles are missing. Please fill all slots.";
         feedbackTwo2.style.color = "red";
-        return;
-    };
-    const isCorrect = answers2.includes(value)
-    if(isCorrect) {
-        feedbackTwo2.textContent = "✅　正解（せいかい）！This sentence means, 'Because winter is very cold, I don't like it.'";
+    } else if(allCorrect) {
+        feedbackTwo2.textContent = "✅　正解（せいかい）！";
         feedbackTwo2.style.color = "green";
     } else {
-        feedbackTwo2.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The adjective 'cold' is さむい and is an i-adjective. 'Very' is とても.";
+        feedbackTwo2.textContent = "Highlighted tiles are incorrect. Please try again.";
         feedbackTwo2.style.color = "red";
     };
+
+    const answers = Array.from(slotsTwo2).map(slot => {
+        const tile = slot.querySelector(".tile-p2-q2");
+        return tile ? tile.dataset.name : null;
+    });
 
     logEvent("practice2_submission", {
         question: "p2-q2",
-        answer_raw: value,
-        correct: isCorrect
-    });
-
-    endQuestion("p2-q2", {
-        correct: isCorrect
+        correct: allCorrect,
+        answers_raw: answers,
+        missing: missingTile
     });
 });
 
+// reset
 resetTwo2.addEventListener("click", () => {
-    input2.value = "";
+    document.querySelectorAll(".slot-p2-q2 .tile-p2-q2").forEach(tile => {
+        bankTwo2.appendChild(tile);
+        tile.classList.remove("incorrect");
+    });
     feedbackTwo2.textContent = "";
 });
 
-// Practice2 Q3
-const answers3 = [
-    "勉強しますから",
-    "べんきょうしますから",
-    "勉強するから",
-    "べんきょうするから",
-];
-const input3 = document.getElementById("input-p2-3");
-const feedbackTwo3 = document.getElementById("feedback-p2-3");
-const checkTwo3 = document.getElementById("check-p2-3");
-const resetTwo3 = document.getElementById("reset-p2-3");
+// Practice 2 Q3
+const tilesTwo3 = document.querySelectorAll(".tile-p2-q3");
+const slotsTwo3 = document.querySelectorAll(".slot-p2-q3");
+const bankTwo3 = document.getElementById("tiles-p2-q3");
+const checkTwo3 = document.getElementById("check-p2-q3");
+const resetTwo3 = document.getElementById("reset-p2-q3");
+const feedbackTwo3 = document.getElementById("feedback-p2-q3");
+let draggedTileTwo3 = null;
 
-input3.addEventListener("input", () => {
-    startQuestion("p2-q3");
-}, { once: true });
+// dragstart, dragend
+tilesTwo3.forEach(tile => {
+    tile.addEventListener("dragstart", () => {
+        draggedTileTwo3 = tile;
+        tile.classList.add("dragging");
+    });
+    tile.addEventListener("dragend", () => {
+        tile.classList.remove("dragging");
+        draggedTileTwo3 = null;
+    });
+});
 
+// dragover, drop
+slotsTwo3.forEach(slot => {
+    slot.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        slot.classList.add("over");
+    });
+    slot.addEventListener("dragleave", () => {
+        slot.classList.remove("over");
+    });
+    slot.addEventListener("drop", (e) => {
+        e.preventDefault();
+        slot.classList.remove("over");
+
+        if(!draggedTileTwo3) return;
+
+        const existingTileTwo3 = slot.querySelector(".tile-p2-q3");
+        if(existingTileTwo3) {
+            bankTwo3.appendChild(existingTileTwo3)
+        };
+        slot.appendChild(draggedTileTwo3);
+    });
+});
+
+// check answer
 checkTwo3.addEventListener("click", () => {
-    const value = input3.value.trim();
-    if(value === "") {
-        feedbackTwo3.textContent = "Please enter an answer before checking.";
-        feedbackTwo3.style.color = "red";
-        return;
-    };
-    const isCorrect = answers3.includes(value);
-    if(isCorrect) {
-        feedbackTwo3.textContent = "✅　正解（せいかい）！This sentence means, 'Because I will study, I will not go to the party.'";
-        feedbackTwo3.style.color = "green";
-    } else {
-        feedbackTwo3.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Don't forget から to mark the reason. The verb 'to study' is べんきょうする.";
-        feedbackTwo3.style.color = "red";
-    };
+    let allCorrect = true;
+    let missingTile = false;
+
+    tilesTwo3.forEach(tile => tile.classList.remove("incorrect"));
+
+    slotsTwo3.forEach(slot => {
+        const tile = slot.querySelector(".tile-p2-q3");
+
+        if(!tile) {
+            allCorrect = false;
+            missingTile = true;
+            return;
+        };
+        const slotCorrect = slot.dataset.correct;
+        const tileName = tile.dataset.name;
+        if(slotCorrect != tileName) {
+            allCorrect = false;
+            tile.classList.add("incorrect");
+        };
+    });
+        if(allCorrect) {
+            feedbackTwo3.textContent = "✅　正解（せいかい）！";
+            feedbackTwo3.style.color = "green";
+        } else if(missingTile) {
+            feedbackTwo3.textContent = "One or more tiles are missing. Please fill all slots.";
+            feedbackTwo3.style.color = "red";
+        } else {
+            feedbackTwo3.textContent = "Highlighted tiles are incorrect. Please try again.";
+            feedbackTwo3.style.color = "red";
+        };
+
+    const answers = Array.from(slotsTwo3).map(slot => {
+        const tile = slot.querySelector(".tile-p2-q3");
+        return tile ? tile.dataset.name : null;
+    });
 
     logEvent("practice2_submission", {
         question: "p2-q3",
-        answer_raw: value,
-        correct: isCorrect
-    });
-
-    endQuestion("p2-q3", {
-        correct: isCorrect
+        correct: allCorrect,
+        answers_raw: answers,
+        missing: missingTile
     });
 });
 
+// reset
 resetTwo3.addEventListener("click", () => {
-    input3.value = "";
+    document.querySelectorAll(".slot-p2-q3 .tile-p2-q3").forEach(tile => {
+        bankTwo3.appendChild(tile);
+        tile.classList.remove("incorrect");
+    });
     feedbackTwo3.textContent = "";
 });
 
-// Practice3 continue
+// Practice2 continue
 const continueP2 = document.getElementById("continue-p2");
 const practiceThree = document.getElementById("practice-3");
 
@@ -710,7 +822,7 @@ async function checkPractice3(q) {
     await logEvent("practice3_feedback", {
         question: `p3-q${q}`,
         verdict: data.verdict ?? null,
-        summary: data.summary ?? null,
+        perhaps_you_meant: data.perhaps_you_meant ?? null,
         criteria_feedback: data.criteria_feedback ?? null,
         next_step: data.next_step ?? null
     });
@@ -718,11 +830,13 @@ async function checkPractice3(q) {
     // Render: verdict + bullets
     const lines = [];
     if (data.verdict) lines.push(`Verdict: ${data.verdict}`);
-    if (data.summary) lines.push(data.summary);
+    if (data.perhaps_you_meant) {
+        lines.push(`Perhaps you were trying to say: ${data.perhaps_you_meant}`);
+    }
     if (Array.isArray(data.criteria_feedback) && data.criteria_feedback.length) {
-      data.criteria_feedback.forEach(item => {
-        lines.push(`${item.met ? "✅" : "❌"} ${item.criterion} — ${item.comment}`);
-      });
+        data.criteria_feedback.forEach(item => {
+            lines.push(`${item.met ? "✅" : "❌"} ${item.criterion} — ${item.comment}`);
+        });
     }
     if (data.next_step) lines.push(`Next step: ${data.next_step}`);
 
