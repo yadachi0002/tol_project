@@ -37,9 +37,9 @@
             <p>「から」 marks the reason of a situation. In 1), おもしろいです is the reason and すきです is the situation. In 2), あしたしけんがあります is the reason and 行きません is the situation. </p>
             <p><strong>&lt Reason から、Situation &gt</strong></p>
 
-            <p>1) 授業はおもしろいです<span class="kara">から</span>、すきです。<br>
+            <p>1) 授業はおもしろいです<span class="kara">から</span>、すきです。<span class="audio" id="audio-3" data-name="exp1">🔈</span> <br>
                   Because class is fun, I like it.</p>
-            <p>2) あしたしけんがあります<span class="kara">から</span>、えいがに行きません。<br>
+            <p>2) あしたしけんがあります<span class="kara">から</span>、えいがに行きません。<span class="audio" id="audio-4" data-name="exp2">🔈</span> <br>
                   Because I have a test tomorrow, I will not go to the movie.</p>
             
             <div class="continue">
@@ -64,8 +64,8 @@
                 <button class="reset" id="reset-p1-1">Reset</button>
                 <div class="feedback" id="feedback-p1-1"></div>
                 <div class="tiles" id="tiles-1">
-                    <div class="tile tile-q1" draggable="true" data-type="situation" data-name="situation-1">えいがに行きませんか</div>
-                    <div class="tile tile-q1" draggable="true" data-type="reason" data-name="reason-1">きっぷが二まいあります</div>
+                    <div class="tile tile-q1" draggable="true" data-type="situation" data-name="situation-1">えいがに行（い）きませんか</div>
+                    <div class="tile tile-q1" draggable="true" data-type="reason" data-name="reason-1">きっぷが二（に）まいあります</div>
                 </div>
                 
             </div>
@@ -81,7 +81,7 @@
                 <button class="reset" id="reset-p1-2">Reset</button>
                 <div class="feedback" id="feedback-p1-2"></div>
                 <div class="tiles" id="tiles-2">
-                    <div class="tile tile-q2" draggable="true" data-type="reason" data-name="reason-2">毎日九時から四時まで授業があります</div>
+                    <div class="tile tile-q2" draggable="true" data-type="reason" data-name="reason-2">まいにち九時（くじ）から四時（よじ）まで授業（じゅぎょう）があります</div>
                     <div class="tile tile-q2" draggable="true" data-type="situation" data-name="situation-2">とてもいそがしいです</div>
                 </div>  
             </div>
@@ -97,7 +97,7 @@
                 <button class="reset" id="reset-p1-3">Reset</button>
                 <div class="feedback" id="feedback-p1-3"></div>
                 <div class="tiles" id="tiles-3">
-                    <div class="tile tile-q3" draggable="true" data-type="situation" data-name="situation-3">毎日食べます</div>
+                    <div class="tile tile-q3" draggable="true" data-type="situation" data-name="situation-3">まいにち食（た）べます</div>
                     <div class="tile tile-q3" draggable="true" data-type="reason" data-name="reason-3">すしがすきです</div>
                 </div>
             </div>
@@ -111,40 +111,98 @@
             <div id="practice-2">
             <h3>Let's practice! 💪</h3>
             <p><strong>II. <br>
-                Instructions: </strong>Complete each sentence with the cues provided.</p>
-                <p><strong>Note: </strong>Please do not use any punctuation such as "、"</p>
-            
-            <div id="section-2">
-                <div class="question" id="p2-q1">
-                    1)
-                    (Because Japanese is fun)<input class="input-p2" id="input-p2-1">、すきです。
-                    <div class="controls">
-                    <button class="check" id="check-p2-1">Check answer</button>
-                    <button class="reset" id="reset-p2-1">Reset</button>
+                Instructions: </strong>Arrange the tiles in the slots so they match the English sentence.</p>
+
+                <div id="p2-q1">
+                    <div class="sentence" id="sentence-q1">
+                        <p>1) Because Japanese is fun, I like it.</p>
                     </div>
-                    <div class="feedback" id="feedback-p2-1"></div>
+
+                    <div class="dropzone-p2" id="dropzone-p2-q1">
+                        <span class="slot-p2 slot-p2-q1" data-correct="nihongo"></span>
+                        <span class="slot-p2 slot-p2-q1" data-correct="wa"></span>
+                        <span class="slot-p2 slot-p2-q1" data-correct="tanoshiidesu"></span>
+                        <span class="slot-p2 slot-p2-q1" data-correct="kara"></span>
+                        <span class="slot-p2 slot-p2-q1" data-correct="sukidesu"></span>
+                    </div>
+
+                    <div class="tile-row-p2">
+                        <div class="tiles-p2" id="tiles-p2-q1">
+                            <div class="tile-p2 tile-p2-q1" draggable="true" data-name="sukidesu">すきです</div>
+                            <div class="tile-p2 tile-p2-q1" draggable="true" data-name="tanoshiidesu">たのしいです</div>
+                            <div class="tile-p2 tile-p2-q1" draggable="true" data-name="nihongo">日本語</div>
+                            <div class="tile-p2 tile-p2-q1" draggable="true" data-name="kara">から</div>
+                            <div class="tile-p2 tile-p2-q1" draggable="true" data-name="wa">は</div> 
+                        </div>
+                    </div>
+
+                    <div class="controls" id="controls-p2-q1">
+                    <button class="check" id="check-p2-q1">Check answer</button>
+                    <button class="reset" id="reset-p2-q1">Reset</button>
+                </div>
+                <div class="feedback" id="feedback-p2-q1"></div>
                 </div>
 
-                <div class="question" id="p2-q2">
-                    2)
-                    (Because winter is very cold)<input class="input-p2" id="input-p2-2">、きらいです。
-                    <div class="controls">
-                    <button class="check" id="check-p2-2">Check answer</button>
-                    <button class="reset" id="reset-p2-2">Reset</button>
+                <div id="p2-q2">
+                    <div class="sentence" id="sentence-q2">
+                        <p>2) Because winter is very cold, I dislike it.</p>
                     </div>
-                    <div class="feedback" id="feedback-p2-2"></div>
+
+                    <div class="dropzone-p2" id="dropzone-p2-q2">
+                        <span class="slot-p2 slot-p2-q2" data-correct="huyu"></span>
+                        <span class="slot-p2 slot-p2-q2" data-correct="wa"></span>
+                        <span class="slot-p2 slot-p2-q2" data-correct="samuidesu"></span>
+                        <span class="slot-p2 slot-p2-q2" data-correct="kara"></span>
+                        <span class="slot-p2 slot-p2-q2" data-correct="kiraidesu"></span>
+                    </div>
+
+                    <div class="tile-row-p2">
+                        <div class="tiles-p2" id="tiles-p2-q2">
+                            <div class="tile-p2 tile-p2-q2" draggable="true" data-name="kara">から</div>
+                            <div class="tile-p2 tile-p2-q2" draggable="true" data-name="huyu">ふゆ(winter)</div>
+                            <div class="tile-p2 tile-p2-q2" draggable="true" data-name="kiraidesu">きらいです</div>
+                            <div class="tile-p2 tile-p2-q2" draggable="true" data-name="wa">は</div>
+                            <div class="tile-p2 tile-p2-q2" draggable="true" data-name="samuidesu">さむいです</div>
+                        </div>
+                    </div>
+
+                    <div class="controls" id="controls-p2-q2">
+                    <button class="check" id="check-p2-q2">Check answer</button>
+                    <button class="reset" id="reset-p2-q2">Reset</button>
+                </div>
+                <div class="feedback" id="feedback-p2-q2"></div>
                 </div>
 
-                <div class="question" id="p2-q3">
-                    3)
-                    (Because I will study)<input class="input-p2" id="input-p2-3">、パーティー(party)に行きません。
-                    <div class="controls">
-                    <button class="check" id="check-p2-3">Check answer</button>
-                    <button class="reset" id="reset-p2-3">Reset</button>
+                <div id="p2-q3">
+                    <div class="sentence" id="sentence-q3">
+                        <p>3) Because I will study, I will not go to the party.</p>
                     </div>
-                    <div class="feedback" id="feedback-p2-3"></div>
+
+                    <div class="dropzone-p2" id="dropzone-p2-q3">
+                        <span class="slot-p2 slot-p2-q3" data-correct="benkyooshimasu"></span>
+                        <span class="slot-p2 slot-p2-q3" data-correct="kara"></span>
+                        <span class="slot-p2 slot-p2-q3" data-correct="party"></span>
+                        <span class="slot-p2 slot-p2-q3" data-correct="ni"></span>
+                        <span class="slot-p2 slot-p2-q3" data-correct="ikimasen"></span>
+                    </div>
+
+                    <div class="tile-row-p2">
+                        <div class="tiles-p2" id="tiles-p2-q3">
+                            <div class="tile-p2 tile-p2-q3" draggable="true" data-name="ni">に</div>
+                            <div class="tile-p2 tile-p2-q3" draggable="true" data-name="party">パーティー(party)</div>
+                            <div class="tile-p2 tile-p2-q3" draggable="true" data-name="ikimasen">行（い）きません</div>
+                            <div class="tile-p2 tile-p2-q3" draggable="true" data-name="kara">から</div>
+                            <div class="tile-p2 tile-p2-q3" draggable="true" data-name="benkyooshimasu">べんきょうします</div>
+                        </div>
+                    </div>
+
+                    <div class="controls" id="controls-p2-q3">
+                    <button class="check" id="check-p2-q3">Check answer</button>
+                    <button class="reset" id="reset-p2-q3">Reset</button>
                 </div>
-            </div>
+                <div class="feedback" id="feedback-p2-q3"></div>
+                </div>
+
            <div class="continue">
                 <button id="continue-p2">Continue</button>
             </div>
