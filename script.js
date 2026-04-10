@@ -829,7 +829,7 @@ practice3History[questionId].push({
         learning_objective: "Learner can create their own sentence using the <Reason>から、<Situation> sentence structure correctly.",
         criteria: [
             "The reason marker から is used appropriately. The reason is marked with から, followed by the situation.",
-            "Verbs and adjectives are conjugated correctly in the です／ます form",
+            "Verbs, adjectives and nouns are conjugated correctly in the です／ます form",
             "Vocabulary usage is correct",
             "Particle usage is correct"
         ],
