@@ -236,6 +236,8 @@ checkOne1.addEventListener("click", () => {
         if(!tile) {
             feedbackOne1.textContent = "One or more tiles are missing. Please fill all tile slots.";
             feedbackOne1.style.color = "red";
+            allCorrect = false;
+            return;
         };
         
         const tileName = tile.dataset.name;
@@ -326,6 +328,8 @@ checkOne2.addEventListener("click", () => {
         if(!tile) {
             feedbackOne2.textContent = "One or more tiles are missing. Please fill all tile slots.";
             feedbackOne2.style.color = "red";
+            allCorrect = false;
+            return;
         };
         
         const tileName = tile.dataset.name;
@@ -415,6 +419,8 @@ checkOne3.addEventListener("click", () => {
         if(!tile) {
             feedbackOne3.textContent = "One or more tiles are missing. Please fill all tile slots.";
             feedbackOne3.style.color = "red";
+            allCorrect = false;
+            return;
         };
 
         const tileName = tile.dataset.name;
@@ -905,4 +911,13 @@ window.addEventListener("beforeunload", () => {
   Object.keys(sectionStartTimes).forEach(section => {
     endSection(section);
   });
+});
+
+// show thank you text
+const lastButton = document.getElementById("end");
+const thanks = document.getElementById("thanks");
+
+lastButton.addEventListener("click", () => {
+    console.log("end clicked");
+    thanks.style.display = "block";
 });
