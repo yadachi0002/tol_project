@@ -898,17 +898,23 @@ async function checkPractice3(q) {
     console.error(err);
   }
 }
-
 // Attach Practice-3 button handlers (Q1–Q2)
 [1, 2].forEach(q => {
+  const btnCheck = document.getElementById(`check-p3-${q}`);
+  const btnReset = document.getElementById(`reset-p3-${q}`);
   const input = document.getElementById(`input-p3-${q}`);
-  if (!input) return;
+  const feedback = document.getElementById(`feedback-p3-${q}`);
 
-  input.addEventListener("input", () => {
-    const qid = `p3-q${q}`;
-    if (!p3Attempts[qid]) {
-      p3Attempts[qid] = beginAttempt(qid);
-    }
+  btnCheck?.addEventListener("click", (e) => {
+    e.preventDefault();
+    checkPractice3(q);
+  });
+
+  btnReset?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (input) input.value = "";
+    if (feedback) feedback.textContent = "";
+    input?.focus();
   });
 });
 
