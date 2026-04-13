@@ -920,6 +920,5 @@ const lastButton = document.getElementById("end");
 const thanks = document.getElementById("thanks");
 
 lastButton.addEventListener("click", () => {
-    console.log("end clicked");
     thanks.style.display = "block";
 });
