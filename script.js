@@ -884,9 +884,11 @@ practice3History[questionId].push({
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
 
-input.addEventListener("input", () => {
+if (input) {
+  input.addEventListener("input", () => {
     startQuestion(`p3-q${q}`);
-}, { once: true });
+  }, { once: true });
+}
 
   btnCheck?.addEventListener("click", (e) => {
     e.preventDefault();
