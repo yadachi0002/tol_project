@@ -878,7 +878,7 @@ practice3History[questionId].push({
 }
 
 // Attach Practice-3 button handlers (Q1–Q3)
-[1, 2, 3].forEach((q) => {
+[1, 2].forEach((q) => {
   const btnCheck = document.getElementById(`check-p3-${q}`);
   const btnReset = document.getElementById(`reset-p3-${q}`);
   const input    = document.getElementById(`input-p3-${q}`);
