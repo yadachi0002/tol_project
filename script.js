@@ -33,48 +33,37 @@ function logEvent(event, data = {}) {
 }
 
 // ===============================
-// Per-question timing
+// Per-attempt timing (GLOBAL)
 // ===============================
+const attemptStartTimes = {};
+const attemptCounters = {};
 
-const questionStartTimes = {};
+function beginAttempt(questionId) {
+  if (!attemptCounters[questionId]) {
+    attemptCounters[questionId] = 1;
+  } else {
+    attemptCounters[questionId]++;
+  }
 
-function startQuestion(questionId) {
-  // Only start once
-  if (questionStartTimes[questionId]) return;
-
-  questionStartTimes[questionId] = Date.now();
+  const attempt = attemptCounters[questionId];
+  attemptStartTimes[`${questionId}-a${attempt}`] = Date.now();
+  return attempt;
 }
 
-function endQuestion(questionId, extra = {}) {
-  const start = questionStartTimes[questionId];
+function finishAttempt(questionId, attempt, extra = {}) {
+  const key = `${questionId}-a${attempt}`;
+  const start = attemptStartTimes[key];
   if (!start) return;
 
-  logEvent("question_time", {
+  logEvent("attempt_time", {
     question: questionId,
+    attempt,
     ms_spent: Date.now() - start,
     ...extra
   });
 
-  delete questionStartTimes[questionId];
+  delete attemptStartTimes[key];
 }
-
-// Log all button clicks
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-
-  logEvent("button_click", {
-    buttonId: btn.id,
-    label: btn.textContent.trim()
-  });
-});
-
-// Log input typing just for non-question inputs
-document.querySelectorAll("input:not(.input-p2):not(.input-p3)").forEach(input => {
-  input.addEventListener("input", () => {
-  }, { once: true });
-});
-``
 
 // ===============================
 // Section-level timing
@@ -189,10 +178,13 @@ const resetOne1 = document.getElementById("reset-p1-1");
 const checkOne1 = document.getElementById("check-p1-1");
 const bankOne1 = document.getElementById("tiles-1"); 
 let draggedTileOne = null;
+let p1q1Attempt = null;
 
 tilesOne.forEach(tile => {
     tile.addEventListener("dragstart", () => {
-        startQuestion("p1-q1");
+        if (!p1q1Attempt) {
+            p1q1Attempt = beginAttempt("p1-q1");
+        }
         draggedTileOne = tile;
         tile.classList.add("dragging");
     });
@@ -252,15 +244,14 @@ checkOne1.addEventListener("click", () => {
         feedbackOne1.textContent = "❌　不正解（ふせいかい）！Remember the structure 「<Reason>から、<Situation>」. Which is the reason - going to the movies or having two tickets?";
         feedbackOne1.style.color = "red";
      };  
-
+     
      logEvent("practice1_check", {
         question: "p1-q1",
-        correct: allCorrect
+        correct: allCorrect,
+        attempt: p1q1Attempt
     });
-    
-    endQuestion("p1-q1", {
-        correct: allCorrect
-    });
+    finishAttempt("p1-q1", p1q1Attempt, { correct: allCorrect });
+    p1q1Attempt = null; // reset for next attempt
 });
 
 resetOne1.addEventListener("click", () => {
@@ -281,10 +272,13 @@ const resetOne2 = document.getElementById("reset-p1-2");
 const checkOne2 = document.getElementById("check-p1-2");
 const bankOne2 = document.getElementById("tiles-2"); 
 let draggedTileTwo = null;
+let p1q2Attempt = null;
 
 tilesTwo.forEach(tile => {
     tile.addEventListener("dragstart", () => {
-        startQuestion("p1-q2");
+        if (!p1q2Attempt) {
+            p1q2Attempt = beginAttempt("p1-q2");
+        }
         draggedTileTwo = tile;
         tile.classList.add("dragging");
     });
@@ -347,12 +341,11 @@ checkOne2.addEventListener("click", () => {
 
      logEvent("practice1_check", {
         question: "p1-q2",
-        correct: allCorrect
+        correct: allCorrect,
+        attempt: p1q2Attempt
     });
-
-    endQuestion("p1-q2", {
-        correct: allCorrect
-    });
+    finishAttempt("p1-q2", p1q2Attempt, { correct: allCorrect });
+    p1q2Attempt = null; // reset for next attempt
 });
 
 resetOne2.addEventListener("click", () => {
@@ -373,13 +366,17 @@ const resetOne3 = document.getElementById("reset-p1-3");
 const feedbackOne3 = document.getElementById("feedback-p1-3");
 const bankOne3 = document.getElementById("tiles-3");
 let draggedTile3 = null;
+let p1q3Attempt = null;
 
 tilesThree.forEach(tile => {
     tile.addEventListener("dragstart", () => {
-        startQuestion("p1-q3");
+        if (!p1q3Attempt) {
+            p1q3Attempt = beginAttempt("p1-q3");
+        }
         draggedTile3 = tile;
         tile.classList.add("dragging");
     });
+
     tile.addEventListener("dragend", () => {
         tile.classList.remove("dragging");
         draggedTile3 = null;
@@ -438,12 +435,11 @@ checkOne3.addEventListener("click", () => {
 
     logEvent("practice1_check", {
         question: "p1-q3",
-        correct: allCorrect
+        correct: allCorrect,
+        attempt: p1q3Attempt
     });
-
-    endQuestion("p1-q3", {
-        correct: allCorrect
-    });
+    finishAttempt("p1-q3", p1q3Attempt, { correct: allCorrect });
+    p1q3Attempt = null; // reset for next attempt
 });
 
 resetOne3.addEventListener("click", () => {
@@ -477,10 +473,14 @@ const checkTwo1 = document.getElementById("check-p2-q1");
 const resetTwo1 = document.getElementById("reset-p2-q1");
 const feedbackTwo1 = document.getElementById("feedback-p2-q1");
 let draggedTileTwo1 = null;
+let p2q1Attempt = null;
 
 // dragstart/end
 tilesTwo1.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        if (!p2q1Attempt) {
+            p2q1Attempt = beginAttempt("p2-q1");
+        }
         draggedTileTwo1 = tile;
         tile.classList.add("dragging");
     });
@@ -556,13 +556,16 @@ checkTwo1.addEventListener("click", () => {
         const tile = slot.querySelector(".tile-p2-q1");
         return tile ? tile.dataset.name : null;
     });
-
+    
     logEvent("practice2_submission", {
-        question: "p2-q1",
-        correct: allCorrect,
-        answers_raw: answers,
-        missing: missingTile
-    });
+    question: "p2-q1",
+    attempt: p2q1Attempt,
+    correct: allCorrect,
+    answers_raw: answers,
+    missing: missingTile
+});
+finishAttempt("p2-q1", p2q1Attempt, { correct: allCorrect });
+p2q1Attempt = null;
 });
 
 // reset
@@ -582,10 +585,14 @@ const checkTwo2 = document.getElementById("check-p2-q2");
 const resetTwo2 = document.getElementById("reset-p2-q2");
 const feedbackTwo2 = document.getElementById("feedback-p2-q2");
 let draggedTileTwo2 = null;
+let p2q2Attempt = null;
 
 // dragstart/end
 tilesTwo2.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        if (!p2q2Attempt) {
+            p2q2Attempt = beginAttempt("p2-q2");
+        }
         draggedTileTwo2 = tile;
         tile.classList.add("dragging");
     });
@@ -663,11 +670,14 @@ checkTwo2.addEventListener("click", () => {
     });
 
     logEvent("practice2_submission", {
-        question: "p2-q2",
-        correct: allCorrect,
-        answers_raw: answers,
-        missing: missingTile
-    });
+    question: "p2-q2",
+    attempt: p2q2Attempt,
+    correct: allCorrect,
+    answers_raw: answers,
+    missing: missingTile
+});
+finishAttempt("p2-q2", p2q2Attempt, { correct: allCorrect });
+p2q2Attempt = null;
 });
 
 // reset
@@ -687,13 +697,18 @@ const checkTwo3 = document.getElementById("check-p2-q3");
 const resetTwo3 = document.getElementById("reset-p2-q3");
 const feedbackTwo3 = document.getElementById("feedback-p2-q3");
 let draggedTileTwo3 = null;
+let p2q3Attempt = null;
 
 // dragstart, dragend
 tilesTwo3.forEach(tile => {
     tile.addEventListener("dragstart", () => {
+        if (!p2q3Attempt) {
+            p2q3Attempt = beginAttempt("p2-q3");
+        }
         draggedTileTwo3 = tile;
         tile.classList.add("dragging");
     });
+
     tile.addEventListener("dragend", () => {
         tile.classList.remove("dragging");
         draggedTileTwo3 = null;
@@ -762,11 +777,14 @@ checkTwo3.addEventListener("click", () => {
     });
 
     logEvent("practice2_submission", {
-        question: "p2-q3",
-        correct: allCorrect,
-        answers_raw: answers,
-        missing: missingTile
-    });
+    question: "p2-q3",
+    attempt: p2q3Attempt,
+    correct: allCorrect,
+    answers_raw: answers,
+    missing: missingTile
+});
+finishAttempt("p2-q3", p2q3Attempt, { correct: allCorrect });
+p2q3Attempt = null;
 });
 
 // reset
@@ -792,35 +810,37 @@ continueP2.addEventListener("click", () => {
 });
 
 // Practice3
+let p3Attempts = {};
+
 async function checkPractice3(q) {
 
   const input    = document.getElementById(`input-p3-${q}`);
   const feedback = document.getElementById(`feedback-p3-${q}`);
   const answer   = (input.value || "").trim();
   const questionId = `p3-q${q}`;
+  const attempt = p3Attempts[questionId]; 
 
   if (!practice3History[questionId]) {
     practice3History[questionId] = [];
 }
-const attemptNumber = practice3History[questionId].length + 1;
-
-practice3History[questionId].push({
-  attempt: attemptNumber,
-  learner_input: answer
-});
 
   if (!answer) {
     feedback.textContent = "Please write a sentence that uses 「から」.";
     feedback.style.color = "red";
     return;
   }
-
+  
+  const attemptNumber = practice3History[questionId].length + 1;
+  practice3History[questionId].push({
+    attempt: attemptNumber,
+    learner_input: answer
+});
+  
   logEvent("practice3_submission", {
-        question: `p3-q${q}`,
-        answer_raw: answer
-    });
-
-    endQuestion(`p3-q${q}`);
+  question: questionId,
+  attempt,                 
+  answer_raw: answer
+});
 
   feedback.textContent = "Evaluating your sentence…";
   feedback.style.color = "#555";
@@ -845,14 +865,13 @@ practice3History[questionId].push({
 
     const data = await res.json();
     practice3History[questionId][attemptNumber - 1].feedback = data;
-
+    
     await logEvent("practice3_feedback", {
-        question: `p3-q${q}`,
-        verdict: data.verdict ?? null,
-        perhaps_you_meant: data.perhaps_you_meant ?? null,
-        criteria_feedback: data.criteria_feedback ?? null,
-        next_step: data.next_step ?? null
+      question: questionId,
+      attempt,             
+      verdict: data.verdict ?? null
     });
+
 
     // Render: verdict + bullets
     const lines = [];
@@ -870,6 +889,9 @@ practice3History[questionId].push({
     feedback.textContent = lines.join("\n");
     feedback.style.whiteSpace = "pre-wrap";
     feedback.style.color = (data.verdict === "Correct") ? "green" : "purple";
+    
+    finishAttempt(questionId, attempt);
+    p3Attempts[questionId] = null;
   } catch (err) {
     feedback.textContent = "Temporary issue contacting the feedback service. Please try again.";
     feedback.style.color = "red";
@@ -877,29 +899,16 @@ practice3History[questionId].push({
   }
 }
 
-// Attach Practice-3 button handlers (Q1–Q3)
-[1, 2].forEach((q) => {
-  const btnCheck = document.getElementById(`check-p3-${q}`);
-  const btnReset = document.getElementById(`reset-p3-${q}`);
-  const input    = document.getElementById(`input-p3-${q}`);
-  const feedback = document.getElementById(`feedback-p3-${q}`);
+// Attach Practice-3 button handlers (Q1–Q2)
+[1, 2].forEach(q => {
+  const input = document.getElementById(`input-p3-${q}`);
+  if (!input) return;
 
-if (input) {
   input.addEventListener("input", () => {
-    startQuestion(`p3-q${q}`);
-  }, { once: true });
-}
-
-  btnCheck?.addEventListener("click", (e) => {
-    e.preventDefault();
-    checkPractice3(q);
-  });
-
-  btnReset?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (input) input.value = "";
-    if (feedback) feedback.textContent = "";
-    input?.focus();
+    const qid = `p3-q${q}`;
+    if (!p3Attempts[qid]) {
+      p3Attempts[qid] = beginAttempt(qid);
+    }
   });
 });
 
@@ -920,5 +929,6 @@ const lastButton = document.getElementById("end");
 const thanks = document.getElementById("thanks");
 
 lastButton.addEventListener("click", () => {
+    endSection("practice-3");
     thanks.style.display = "block";
 });
