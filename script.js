@@ -98,6 +98,15 @@ function endSection(sectionName) {
 // ===============================
 const practice3History = {};
 
+// Welcome continue
+const intro = document.getElementById("intro");
+const continueStart = document.getElementById("start");
+
+continueStart.addEventListener("click", () => {
+    intro.style.display = "block";
+    startSection("intro");
+    intro.scrollIntoView({ behavior: "smooth" });
+});
 
 // Intro & Explanation audio
 const audioMap = {
@@ -948,11 +957,6 @@ await logEvent("practice3_feedback", {
     if (feedback) feedback.textContent = "";
     input?.focus();
   });
-});
-
-// Start timing Intro when page loads
-document.addEventListener("DOMContentLoaded", () => {
-  startSection("intro");
 });
 
 // Capture time if learner leaves early
