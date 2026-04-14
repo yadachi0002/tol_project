@@ -1,11 +1,19 @@
 body { font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif; }
 body { font-family: system-ui, sans-serif; padding: 20px; line-height:1.6; }
 
+#welcome {
+    margin-top: 10px;
+    padding: 10px;
+    background: #faf7f2;
+    border-radius: 10px;
+}
+
 #intro {
     margin-top: 10px;
     padding: 10px;
     background: #eef5ff;
     border-radius: 10px;
+    display: none;
 }
 
 #explanation {
