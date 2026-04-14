@@ -837,7 +837,12 @@ async function checkPractice3(q) {
   const feedback = document.getElementById(`feedback-p3-${q}`);
   const answer   = (input.value || "").trim();
   const questionId = `p3-q${q}`;
-  const attempt = p3Attempts[questionId]; 
+
+  // ✅ Fix: Start the attempt and get the number
+  if (!p3Attempts[questionId]) {
+    p3Attempts[questionId] = beginAttempt(questionId);
+  }
+  const attempt = p3Attempts[questionId];
 
   if (!practice3History[questionId]) {
     practice3History[questionId] = [];
