@@ -111,6 +111,19 @@ document.querySelectorAll(".audio").forEach(button => {
     button.style.cursor = "pointer"; 
     button.addEventListener("click", () => {
         const audioKey = button.dataset.name;
+
+// ✅ NEW: determine section based on audio key
+    const section =
+      audioKey === "q1" || audioKey === "q2"
+        ? "intro"
+        : "explanation";
+
+    // ✅ NEW: log audio play
+    logEvent("audio_play", {
+      audio_id: audioKey,
+      section
+    });
+
         if(audioMap[audioKey]) {
             audioMap[audioKey].currentTime = 0;
             audioMap[audioKey].play();
