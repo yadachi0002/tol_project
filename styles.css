@@ -207,3 +207,12 @@ body { font-family: system-ui, sans-serif; padding: 20px; line-height:1.6; }
 .p2 {
     margin-top: 30px;
 }
+
+/* Always keep the feedback form link blue */
+#thanks a,
+#thanks a:visited,
+#thanks a:hover,
+#thanks a:active {
+  color: #0000EE;      /* standard link blue */
+  text-decoration: underline;
+}
