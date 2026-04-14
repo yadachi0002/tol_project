@@ -888,16 +888,22 @@ async function checkPractice3(q) {
     });
 
     const data = await res.json();
-    practice3History[questionId][attemptNumber - 1].feedback = data;
+// ✅ Ensure the history is updated
+practice3History[questionId][attemptNumber - 1].feedback = data;
 
-    await logEvent("practice3_feedback", {
-      question: questionId,
-      attempt,
-      verdict: data.verdict ?? null,
-      perhaps_you_meant: data.perhaps_you_meant ?? null,
-      criteria_feedback: data.criteria_feedback ?? null,
-      next_step: data.next_step ?? null
-    });
+// ✅ Fix: Capture the actual attempt number from your history or counter
+const currentAttempt = attemptNumber; 
+
+await logEvent("practice3_feedback", {
+  question: questionId,
+  attempt: currentAttempt,
+  verdict: data.verdict || null,
+  // ✅ Verify this key: In worker (2).js, you instructed the LLM 
+  // to output 'perhaps_you_meant'. This line ensures it maps correctly.
+  perhaps_you_meant: data.perhaps_you_meant || null, 
+  criteria_feedback: data.criteria_feedback || null,
+  next_step: data.next_step || null
+});
 
     // Render: verdict + bullets
     const lines = [];
