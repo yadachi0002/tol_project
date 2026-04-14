@@ -971,7 +971,7 @@ const lastButton = document.getElementById("end");
 const thanks = document.getElementById("thanks");
 
 lastButton.addEventListener("click", () => {
-  endSection("practice-3");
-  thanks.style.display = "block";
-  thanks.scrollIntoView({behavior="smooth")};
+    endSection("practice-3");
+    thanks.style.display = "block";
+    thanks.scrollIntoView({behavior: "smooth"});
 });
