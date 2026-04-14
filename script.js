@@ -567,7 +567,7 @@ checkTwo1.addEventListener("click", () => {
         feedbackTwo1.textContent = "✅　正解（せいかい）！";
         feedbackTwo1.style.color = "green";
     } else {
-        feedbackTwo1.textContent = "Highlighted tiles are incorrect. Please try again.";
+        feedbackTwo1.textContent = "Highlighted tiles are incorrect. Remember the <Reason>から、<Situation> structure. It should be '(Japanese is fun)から、(like)'.";
         feedbackTwo1.style.color = "red";
     };
 
@@ -679,7 +679,7 @@ checkTwo2.addEventListener("click", () => {
         feedbackTwo2.textContent = "✅　正解（せいかい）！";
         feedbackTwo2.style.color = "green";
     } else {
-        feedbackTwo2.textContent = "Highlighted tiles are incorrect. Please try again.";
+        feedbackTwo2.textContent = "Highlighted tiles are incorrect. Remember the <Reason>から、<Situation> structure. It should be '(Winter is cold)から、(dislike)'.";
         feedbackTwo2.style.color = "red";
     };
 
@@ -786,7 +786,7 @@ checkTwo3.addEventListener("click", () => {
             feedbackTwo3.textContent = "One or more tiles are missing. Please fill all slots.";
             feedbackTwo3.style.color = "red";
         } else {
-            feedbackTwo3.textContent = "Highlighted tiles are incorrect. Please try again.";
+            feedbackTwo3.textContent = "Highlighted tiles are incorrect. Remember the <Reason>から、<Situation> structure. It should be '(Will study)から、(will not go to the party)'.";
             feedbackTwo3.style.color = "red";
         };
 
