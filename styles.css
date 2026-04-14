@@ -216,7 +216,3 @@ body { font-family: system-ui, sans-serif; padding: 20px; line-height:1.6; }
   color: #0000EE;      /* standard link blue */
   text-decoration: underline;
 }
-
-.feedback {
-    margin-top: 10px;
-}
