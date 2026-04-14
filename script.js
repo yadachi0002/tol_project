@@ -871,13 +871,15 @@ async function checkPractice3(q) {
 
     const data = await res.json();
     practice3History[questionId][attemptNumber - 1].feedback = data;
-    
+
     await logEvent("practice3_feedback", {
       question: questionId,
-      attempt,             
-      verdict: data.verdict ?? null
+      attempt,
+      verdict: data.verdict ?? null,
+      perhaps_you_meant: data.perhaps_you_meant ?? null,
+      criteria_feedback: data.criteria_feedback ?? null,
+      next_step: data.next_step ?? null
     });
-
 
     // Render: verdict + bullets
     const lines = [];
