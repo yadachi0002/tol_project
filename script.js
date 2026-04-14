@@ -11,7 +11,7 @@ const LOG_API_KEY = "455f2fafc30aa4f82741d24fc1c4a3d2696b553de1a61d2da434379bb82
 // ===============================
 // Study-day tagging
 // ===============================
-const STUDY_DAY = "2026-04-14";  // 🔴 CHANGE THIS ON EACH TEST DAY
+const STUDY_DAY = "2026-04-15";  // 🔴 CHANGE THIS ON EACH TEST DAY
 
 // Anonymous per‑session id
 const SESSION_ID = crypto.randomUUID();
